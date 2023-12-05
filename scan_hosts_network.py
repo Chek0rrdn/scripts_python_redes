@@ -17,7 +17,7 @@ signal.signal(signal.SIGINT, def_handler)
 
 def get_arguments():
     parser = argparse.ArgumentParser(description="Herramienta para descubrir hosts activos en unan red con ICMP")
-    parser.add_argument("-t", "--target", required=True, dest="target", help="Host o rango de red a escanear")
+    parser.add_argument("-t", "--target", required=True, dest="target", help="Host o rango de red a escanear (Ex. 192.168.1.1, 192.168.1.1-200)")
 
     args = parser.parse_args()
 
