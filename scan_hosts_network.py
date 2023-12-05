@@ -4,6 +4,7 @@ import signal
 import subprocess
 import sys
 
+from concurrent.futures import ThreadPoolExecutor
 from termcolor import colored
 
 
@@ -38,15 +39,16 @@ def parse_target(target_str: str):
         print(colored("\n El formato de la IP o el rango de IP es invalido \n", 'red'))
 
 
-def host_discovery(targets: list):
-    for target in targets:
-        try:
-            ping = subprocess.run(['ping', '-c', '1', target], timeout=2, stdout=subprocess.DEVNULL)
+def host_discovery(target: list):
+    
+    try:
+        ping = subprocess.run(['ping', '-c', '1', target], timeout=2, stdout=subprocess.DEVNULL)
 
-            if ping.returncode == 0:
-                print(colored(f"\t[i] La IP {target} está activa", 'green'))
+        if ping.returncode == 0:
+            print(colored(f"\t[i] La IP {target} está activa", 'green'))
         
-        except subprocess.TimeoutExpired: pass
+    except subprocess.TimeoutExpired: pass
+
 
 
 def main():
@@ -54,8 +56,10 @@ def main():
     targets = parse_target(target_str)
 
     print(f"\n Hosts activos en la red: \n")
-    host_discovery(targets)
 
+    max_threads = 50
+    with ThreadPoolExecutor(max_workers=max_threads) as executor:
+        executor.map(host_discovery, targets)
 
 
 if __name__ == __name__:
